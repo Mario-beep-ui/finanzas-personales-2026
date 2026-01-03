@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Finanzas personales v 1.0</title>
+    <style>
+        /* * 🎨 VARIABLES & THEME 
+         * Estilo Fintech Corporativo
+         */
+        :root {
+            --primary: #0f172a; /* Slate 900 */
+            --primary-light: #1e293b; /* Slate 800 */
+            --accent: #3b82f6; /* Blue 500 */
+            --accent-hover: #2563eb;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-body: #f1f5f9; /* Slate 100 */
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 🧵 SCROLLBAR DISCRETA Y ELEGANTE */
+        .sidebar, .main-content {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+        }
+
+        .main-content {
+            scrollbar-color: rgba(15, 23, 42, 0.2) transparent;
+        }
+
+        /* Webkit browsers (Chrome, Safari, Edge) */
+        .sidebar::-webkit-scrollbar, .main-content::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb, .main-content::-webkit-scrollbar-thumb {
+            background-color: transparent; /* Oculta por defecto */
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .main-content:hover::-webkit-scrollbar-thumb {
+            background-color: rgba(15, 23, 42, 0.2);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
+            height: 100vh;
+            overflow: hidden; /* App feel */
+            display: flex;
+        }
+
+        /* * 🧭 NAVEGACIÓN (Sidebar) 
+         */
+        .sidebar {
+            width: 260px;
+            min-width: 260px;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            position: relative;
+            z-index: 50;
+            transition: var(--transition);
+            overflow-y: auto;
+        }
+
+        .brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand span { color: var(--accent); }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .nav-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+        /* Mobile Toggle */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 60;
+            background: var(--primary);
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+
+        /* * 📦 LAYOUT PRINCIPAL 
+         */
+        .main-content {
+            flex: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .date-badge {
+            background: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        h1 {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-light);
+        }
+
+        /* * 🧩 SECCIONES Y TRANSICIONES 
+         */
+        .section-view {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* * 🃏 CARDS & DASHBOARD 
+         */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: clamp(1rem, 3vw, 1.5rem);
+            box-shadow: var(--shadow-md);
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.25rem;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid var(--border);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        
+        .stat-card.primary { border-left-color: var(--accent); }
+        .stat-card.danger { border-left-color: var(--danger); }
+        .stat-card.warning { border-left-color: #f59e0b; }
+        .stat-card.success { border-left-color: var(--success); }
+
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+        .stat-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        /* * 📝 FORMULARIOS & INPUTS 
+         */
+        .form-group { margin-bottom: 1rem; }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--primary-light);
+        }
+
+        input[type="number"], input[type="text"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            outline: none;
+            background-color: white;
+            -webkit-appearance: none; /* iOS fix */
+        }
+
+        input:focus, select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            gap: 8px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-danger { background: #fee2e2; color: var(--danger); }
+        .btn-danger:hover { background: #fecaca; }
+        .btn-ghost { background: transparent; color: var(--text-muted); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #f8fafc; }
+        
+        /* * 🚌 TRANSPORTE & LISTAS 
+         */
+        .day-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 0.75rem;
+        }
+        
+        .day-card {
+            background: #f8fafc;
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .day-name { font-weight: 600; font-size: 0.85rem; margin-bottom: 0.5rem; color: var(--primary); }
+
+        /* * 🍔 LISTAS DE DATOS 
+         */
+        .food-list, .data-list {
+            list-style: none;
+        }
+
+        .food-item, .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.85rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            gap: 10px;
+        }
+        .food-item:last-child, .data-item:last-child { border-bottom: none; }
+        
+        .food-info, .data-info { display: flex; flex-direction: column; overflow: hidden; }
+        .food-name, .data-main { font-weight: 600; color: var(--primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .food-cost, .data-sub { font-size: 0.85rem; color: var(--text-muted); }
+
+        /* * 📊 TABLAS FINANCIERAS 
+         */
+        .table-container {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 0 -0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 500px;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: var(--primary-light);
+            position: sticky;
+            top: 0;
+        }
+        tr:last-child td { border-bottom: none; }
+        .num-cell { text-align: right; font-family: 'Consolas', 'Courier New', monospace; }
+        .text-blue { color: var(--accent); }
+        .text-green { color: var(--success); }
+        .text-red { color: var(--danger); }
+
+        /* * 📱 RESPONSIVE ADJUSTMENTS 
+         */
+        @media (max-width: 1024px) {
+            .sidebar { width: 220px; min-width: 220px; }
+            .main-content { padding: 1.5rem; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                height: 100%;
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+            .sidebar.open { left: 0; }
+            .menu-toggle { display: block; }
+            .main-content { padding: 1.25rem; padding-top: 4.5rem; width: 100%; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+            header { margin-bottom: 1.5rem; }
+            .date-badge { font-size: 0.75rem; }
+        }
+
+        @media (max-width: 480px) {
+            .summary-grid { grid-template-columns: 1fr; }
+            .btn { width: 100%; }
+            .day-grid { grid-template-columns: 1fr 1fr; }
+            .brand { margin-bottom: 2rem; }
+            .stat-value { font-size: 1.35rem; }
+        }
+
+        /* Utility */
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .mt-4 { margin-top: 1.5rem; }
+        .w-full { width: 100%; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .hidden { display: none; }
+        
+        .progress-bar-bg {
+            background-color: #e2e8f0;
+            border-radius: 999px;
+            height: 10px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+        .progress-bar-fill {
+            background-color: var(--accent);
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        /* Forms Layout Helpers */
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .input-row > div { flex: 1; min-width: 120px; }
+        .input-row > button { flex-shrink: 0; margin-bottom: 2px; }
+
+        @media (max-width: 600px) {
+            .input-row > div { min-width: 100%; }
+            .input-row > button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toggle Móvil -->
+    <button class="menu-toggle" aria-label="Abrir menú" onclick="toggleSidebar()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="brand">
+            <span>⚡</span> MENU
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <button class="nav-btn active" onclick="router('dashboard')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Resumen
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('transport')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Transporte
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('food')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"></path><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path><line x1="6" y1="1" x2="6" y2="4"></line><line x1="10" y1="1" x2="10" y2="4"></line><line x1="14" y1="1" x2="14" y2="4"></line></svg>
+                    Comida Trabajo
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('misc')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                    Gastos Variados
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('savings')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"></path><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                    Ahorro
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('distro')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                    Distribución Dinero
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-btn" onclick="router('monthly')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    Historial Mensual
+                </button>
+            </li>
+             <li class="nav-item">
+                <button class="nav-btn" onclick="router('annual')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"></path><path d="M18.7 8l-5.1 5.2-2.8-2.7L7 14.3"></path></svg>
+                    Resumen Anual
+                </button>
+            </li>
+        </ul>
+        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.4); margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            Semana Actual: <br> <span id="nav-week-id" style="color: white; font-weight: 600;">...</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content" id="main-scroll" onclick="closeSidebarMobile()">
+        
+        <header>
+            <h1>Finanzas personales v 1.0</h1>
+            <div class="date-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                <span id="current-date-display">...</span>
+            </div>
+        </header>
+
+        <!-- 1️⃣ DASHBOARD VIEW -->
+        <section id="view-dashboard" class="section-view active">
+            <div class="card">
+                <h2>Ingreso Semanal</h2>
+                <div class="form-group">
+                    <label>¿Cuánto ingresaste esta semana?</label>
+                    <input type="number" id="inp-income" placeholder="0.00" oninput="app.updateIncome(this.value)">
+                </div>
+            </div>
+
+            <div class="summary-grid">
+                <div class="stat-card primary">
+                    <div class="stat-label">Ingreso Total</div>
+                    <div class="stat-value" id="disp-income">$0.00</div>
+                    <div class="stat-sub">Semana actual</div>
+                </div>
+                
+                <div class="stat-card danger">
+                    <div class="stat-label">Total Gastos</div>
+                    <div class="stat-value" id="disp-expenses">$0.00</div>
+                    <div class="stat-sub" id="disp-expenses-detail">...</div>
+                </div>
+
+                <div class="stat-card warning">
+                    <div class="stat-label">Ahorro Objetivo</div>
+                    <div class="stat-value" id="disp-savings">$0.00</div>
+                    <div class="stat-sub">Retenido</div>
+                </div>
+
+                <div class="stat-card success" style="border-left-width: 6px;">
+                    <div class="stat-label">DINERO REAL DISPONIBLE</div>
+                    <div class="stat-value" id="disp-available">$0.00</div>
+                    <div class="stat-sub">Para distribución libre</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 style="margin-bottom:1rem; font-size:1rem; color:var(--text-muted);">Acciones Rápidas</h3>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('transport')">🚌 Pasaje</button>
+                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('food')">🍔 Comida</button>
+                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('misc')">💸 Variados</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2️⃣ TRANSPORT VIEW -->
+        <section id="view-transport" class="section-view">
+            <h2>Registro de Transporte</h2>
+            <div class="card">
+                <div class="day-grid" id="transport-grid">
+                </div>
+                <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <span style="color: var(--text-muted); margin-right: 10px;">Total Transporte Semanal:</span>
+                    <strong style="font-size: 1.5rem; color: var(--primary);" id="trans-total">$0.00</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3️⃣ FOOD VIEW -->
+        <section id="view-food" class="section-view">
+            <h2>Comida de Trabajo</h2>
+            
+            <div class="card">
+                <div class="input-row">
+                    <div style="flex: 2;">
+                        <label>Concepto</label>
+                        <input type="text" id="food-name" placeholder="Ej. Tacos, Menú del día...">
+                    </div>
+                    <div>
+                        <label>Precio</label>
+                        <input type="number" id="food-price" placeholder="0.00">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.addFood()">
+                        + Agregar
+                    </button>
+                </div>
+
+                <ul class="food-list" id="food-list-container">
+                </ul>
+                
+                <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <span style="color: var(--text-muted); margin-right: 10px;">Total Comida:</span>
+                    <strong style="font-size: 1.5rem; color: var(--primary);" id="food-total">$0.00</strong>
+                </div>
+            </div>
+        </section>
+
+        <!-- GASTOS VARIADOS VIEW -->
+        <section id="view-misc" class="section-view">
+            <h2>Gastos Variados (No recurrentes)</h2>
+            <div class="card">
+                <div class="input-row">
+                    <div>
+                        <label>Día</label>
+                        <select id="misc-day">
+                        </select>
+                    </div>
+                    <div style="flex: 2;">
+                        <label>Descripción</label>
+                        <input type="text" id="misc-desc" placeholder="Ej. Regalo, Reparación...">
+                    </div>
+                    <div>
+                        <label>Monto</label>
+                        <input type="number" id="misc-price" placeholder="0.00">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.addMisc()">+ Gasto</button>
+                </div>
+
+                <ul class="data-list" id="misc-list-container">
+                </ul>
+                
+                <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
+                    <span style="color: var(--text-muted); margin-right: 10px;">Total Variados:</span>
+                    <strong style="font-size: 1.5rem; color: var(--primary);" id="misc-total">$0.00</strong>
+                </div>
+            </div>
+
+            <!-- Historial -->
+            <div class="card">
+                <button class="btn btn-outline w-full" onclick="app.toggleMiscHistory()">
+                    <span>📜 Ver / Ocultar historial</span>
+                </button>
+                <div id="misc-history-container" class="hidden mt-4">
+                </div>
+            </div>
+        </section>
+
+        <!-- 4️⃣ SAVINGS VIEW -->
+        <section id="view-savings" class="section-view">
+            <h2>Ahorro</h2>
+            <div class="card">
+                <label>Monto a ahorrar esta semana</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="inp-savings" placeholder="0.00" oninput="app.updateSavings(this.value)">
+                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
+                    ℹ️ El ahorro se restará inmediatamente de tu dinero disponible.
+                </p>
+            </div>
+
+            <div class="summary-grid">
+                <div class="stat-card success">
+                    <div class="stat-label">Acumulado Histórico</div>
+                    <div class="stat-value" id="global-savings">$0.00</div>
+                    <div class="stat-sub">Suma de todas las semanas</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DISTRIBUCIÓN VIEW -->
+        <section id="view-distro" class="section-view">
+            <h2>Distribución de Dinero Disponible</h2>
+            
+            <div class="summary-grid mb-4">
+                <div class="stat-card success">
+                    <div class="stat-label">Dinero Real Disponible</div>
+                    <div class="stat-value" id="distro-available">$0.00</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Restante por asignar</div>
+                    <div class="stat-value" id="distro-remaining">$0.00</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="input-row">
+                    <div style="flex: 2;">
+                        <label>Modo de uso</label>
+                        <input type="text" id="distro-name" placeholder="Ej. Supermercado, Salida cine...">
+                    </div>
+                    <div>
+                        <label>Asignar Monto</label>
+                        <input type="number" id="distro-price" placeholder="0.00">
+                    </div>
+                    <button class="btn btn-primary" onclick="app.addDistro()">
+                        Asignar
+                    </button>
+                </div>
+
+                <ul class="data-list" id="distro-list-container">
+                </ul>
+            </div>
+        </section>
+
+        <!-- HISTORIAL MENSUAL VIEW -->
+        <section id="view-monthly" class="section-view">
+            <h2>Historial Mensual</h2>
+            <p class="mb-2" style="color:var(--text-muted)">Resumen de semanas agrupadas por mes.</p>
+            <div id="monthly-container">
+            </div>
+        </section>
+
+        <!-- RESUMEN ANUAL VIEW -->
+        <section id="view-annual" class="section-view">
+            <h2>Resumen Anual</h2>
+            <p class="mb-2" style="color:var(--text-muted)">Desempeño financiero mes a mes.</p>
+            <div id="annual-container">
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /**
+         * 🧠 LOGIC ENGINE
+         * No modificada - mantiene funcionalidad v1.0
+         */
+        const Utils = {
+            formatCurrency: (num) => {
+                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(num || 0);
+            },
+            getCurrentWeekID: () => {
+                const now = new Date();
+                const day = now.getDay();
+                const diff = (day < 5) ? (7 - 5 + day) : (day - 5);
+                const friday = new Date(now);
+                friday.setDate(now.getDate() - diff);
+                friday.setHours(0,0,0,0);
+                return friday.toISOString().split('T')[0];
+            },
+            getWeekDays: (startDateStr) => {
+                const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+                const result = [];
+                const start = new Date(startDateStr);
+                const localDate = new Date(start.valueOf() + start.getTimezoneOffset() * 60000);
+                for(let i=0; i<7; i++) {
+                    const d = new Date(localDate);
+                    d.setDate(localDate.getDate() + i);
+                    result.push({
+                        label: days[d.getDay()],
+                        key: `day_${i}`,
+                        dateShort: `${d.getDate()}/${d.getMonth()+1}`
+                    });
+                }
+                return result;
+            },
+            genId: () => '_' + Math.random().toString(36).substr(2, 9),
+            getMonthName: (dateStr) => {
+                const parts = dateStr.split('-');
+                const d = new Date(parts[0], parts[1]-1, parts[2]);
+                return d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
+            },
+            getYear: (dateStr) => {
+                return dateStr.split('-')[0];
+            }
+        };
+
+        const Storage = {
+            getKey: (weekId) => `fintech_week_${weekId}`,
+            getData: (weekId) => {
+                const raw = localStorage.getItem(Storage.getKey(weekId));
+                let data;
+                if (raw) {
+                    data = JSON.parse(raw);
+                } else {
+                    data = {
+                        id: weekId,
+                        income: 0,
+                        savings: 0,
+                        transport: [0,0,0,0,0,0,0],
+                        food: [],
+                        misc: [],
+                        distribution: []
+                    };
+                }
+                if(!data.misc) data.misc = [];
+                if(!data.distribution) data.distribution = [];
+                return data;
+            },
+            saveData: (weekId, data) => {
+                localStorage.setItem(Storage.getKey(weekId), JSON.stringify(data));
+            },
+            getGlobalSavings: () => {
+                let total = 0;
+                for (let i = 0; i < localStorage.length; i++){
+                    const key = localStorage.key(i);
+                    if(key.startsWith('fintech_week_')) {
+                        const data = JSON.parse(localStorage.getItem(key));
+                        total += (parseFloat(data.savings) || 0);
+                    }
+                }
+                return total;
+            },
+            getAllWeeksData: () => {
+                const weeks = [];
+                for (let i = 0; i < localStorage.length; i++){
+                    const key = localStorage.key(i);
+                    if(key.startsWith('fintech_week_')) {
+                        weeks.push(JSON.parse(localStorage.getItem(key)));
+                    }
+                }
+                return weeks.sort((a, b) => b.id.localeCompare(a.id));
+            }
+        };
+
+        const app = {
+            currentWeekId: null,
+            data: null,
+            realAvailable: 0,
+
+            init: () => {
+                app.currentWeekId = Utils.getCurrentWeekID();
+                app.data = Storage.getData(app.currentWeekId);
+                document.getElementById('nav-week-id').innerText = app.currentWeekId;
+                const now = new Date();
+                document.getElementById('current-date-display').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const daySelect = document.getElementById('misc-day');
+                const weekDays = Utils.getWeekDays(app.currentWeekId);
+                weekDays.forEach(day => {
+                    const opt = document.createElement('option');
+                    opt.value = day.label;
+                    opt.text = `${day.label} (${day.dateShort})`;
+                    daySelect.appendChild(opt);
+                });
+                app.renderAll();
+            },
+
+            save: () => {
+                Storage.saveData(app.currentWeekId, app.data);
+                app.updateDashboardCalculations();
+            },
+
+            updateIncome: (val) => {
+                app.data.income = parseFloat(val) || 0;
+                app.save();
+            },
+
+            updateSavings: (val) => {
+                app.data.savings = parseFloat(val) || 0;
+                app.save();
+            },
+
+            renderTransportInputs: () => {
+                const grid = document.getElementById('transport-grid');
+                grid.innerHTML = '';
+                const days = Utils.getWeekDays(app.currentWeekId);
+                days.forEach((day, index) => {
+                    const val = app.data.transport[index] || '';
+                    const div = document.createElement('div');
+                    div.className = 'day-card';
+                    div.innerHTML = `
+                        <div class="day-name">${day.label} <span style="font-weight:400; font-size:0.8em; color:#94a3b8">(${day.dateShort})</span></div>
+                        <input type="number" placeholder="0" value="${val}" onchange="app.updateTransport(${index}, this.value)">
+                    `;
+                    grid.appendChild(div);
+                });
+                const total = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
+                document.getElementById('trans-total').innerText = Utils.formatCurrency(total);
+            },
+
+            updateTransport: (dayIndex, val) => {
+                app.data.transport[dayIndex] = parseFloat(val) || 0;
+                app.save();
+                app.renderTransportInputs();
+            },
+
+            renderFoodList: () => {
+                const list = document.getElementById('food-list-container');
+                list.innerHTML = '';
+                let total = 0;
+                app.data.food.forEach((item, index) => {
+                    total += parseFloat(item.price);
+                    const li = document.createElement('li');
+                    li.className = 'food-item';
+                    li.innerHTML = `
+                        <div class="food-info">
+                            <span class="food-name">${item.name}</span>
+                            <span class="food-cost">${Utils.formatCurrency(item.price)}</span>
+                        </div>
+                        <button class="btn btn-danger" style="padding: 6px 12px;" onclick="app.removeFood(${index})">×</button>
+                    `;
+                    list.appendChild(li);
+                });
+                if(app.data.food.length === 0) {
+                    list.innerHTML = '<li style="padding:1rem; text-align:center; color:#94a3b8;">No hay comidas registradas.</li>';
+                }
+                document.getElementById('food-total').innerText = Utils.formatCurrency(total);
+            },
+
+            addFood: () => {
+                const nameInp = document.getElementById('food-name');
+                const priceInp = document.getElementById('food-price');
+                const name = nameInp.value.trim();
+                const price = parseFloat(priceInp.value);
+                if(name && price) {
+                    app.data.food.push({ id: Utils.genId(), name, price });
+                    nameInp.value = '';
+                    priceInp.value = '';
+                    app.save();
+                    app.renderFoodList();
+                }
+            },
+
+            removeFood: (index) => {
+                app.data.food.splice(index, 1);
+                app.save();
+                app.renderFoodList();
+            },
+
+            renderMiscList: () => {
+                const list = document.getElementById('misc-list-container');
+                list.innerHTML = '';
+                let total = 0;
+                app.data.misc.forEach((item, index) => {
+                    total += parseFloat(item.amount);
+                    const li = document.createElement('li');
+                    li.className = 'data-item';
+                    li.innerHTML = `
+                        <div class="data-info">
+                            <span class="data-main">${item.desc}</span>
+                            <span class="data-sub">${item.day} - ${Utils.formatCurrency(item.amount)}</span>
+                        </div>
+                        <button class="btn btn-danger" style="padding: 6px 12px;" onclick="app.removeMisc(${index})">×</button>
+                    `;
+                    list.appendChild(li);
+                });
+                if(app.data.misc.length === 0) {
+                    list.innerHTML = '<li style="padding:1rem; text-align:center; color:#94a3b8;">Sin gastos variados.</li>';
+                }
+                document.getElementById('misc-total').innerText = Utils.formatCurrency(total);
+            },
+
+            addMisc: () => {
+                const day = document.getElementById('misc-day').value;
+                const descInp = document.getElementById('misc-desc');
+                const priceInp = document.getElementById('misc-price');
+                const desc = descInp.value.trim();
+                const amount = parseFloat(priceInp.value);
+                if(desc && amount) {
+                    app.data.misc.push({ id: Utils.genId(), day, desc, amount });
+                    descInp.value = '';
+                    priceInp.value = '';
+                    app.save();
+                    app.renderMiscList();
+                }
+            },
+
+            removeMisc: (index) => {
+                app.data.misc.splice(index, 1);
+                app.save();
+                app.renderMiscList();
+            },
+
+            toggleMiscHistory: () => {
+                const container = document.getElementById('misc-history-container');
+                const isHidden = container.classList.contains('hidden');
+                if(isHidden) {
+                    container.classList.remove('hidden');
+                    const allWeeks = Storage.getAllWeeksData();
+                    const pastWeeks = allWeeks.filter(w => w.id !== app.currentWeekId);
+                    container.innerHTML = '';
+                    if(pastWeeks.length === 0) {
+                        container.innerHTML = '<p style="padding:1rem; text-align:center;">No hay historial.</p>';
+                        return;
+                    }
+                    pastWeeks.forEach(week => {
+                        const miscTotal = (week.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
+                        if(miscTotal > 0) {
+                            const div = document.createElement('div');
+                            div.className = 'card';
+                            div.style.border = '1px solid #e2e8f0';
+                            div.style.backgroundColor = '#f8fafc';
+                            let itemsHtml = (week.misc || []).map(m => `<li>${m.day}: ${m.desc} (${Utils.formatCurrency(m.amount)})</li>`).join('');
+                            div.innerHTML = `
+                                <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:5px;">
+                                    <strong>Semana: ${week.id}</strong>
+                                    <span class="text-danger">Total: ${Utils.formatCurrency(miscTotal)}</span>
+                                </div>
+                                <ul style="font-size:0.9rem; padding-left:20px; color:var(--text-muted)">${itemsHtml}</ul>
+                            `;
+                            container.appendChild(div);
+                        }
+                    });
+                } else {
+                    container.classList.add('hidden');
+                }
+            },
+
+            renderDistro: () => {
+                const list = document.getElementById('distro-list-container');
+                list.innerHTML = '';
+                let totalAssigned = 0;
+                app.data.distribution.forEach((item, index) => {
+                    totalAssigned += parseFloat(item.amount);
+                    const li = document.createElement('li');
+                    li.className = 'data-item';
+                    li.innerHTML = `
+                        <div class="data-info">
+                            <span class="data-main">${item.usage}</span>
+                            <span class="data-sub">${Utils.formatCurrency(item.amount)}</span>
+                        </div>
+                        <button class="btn btn-danger" style="padding: 6px 12px;" onclick="app.removeDistro(${index})">×</button>
+                    `;
+                    list.appendChild(li);
+                });
+                document.getElementById('distro-available').innerText = Utils.formatCurrency(app.realAvailable);
+                const remaining = app.realAvailable - totalAssigned;
+                const elRemaining = document.getElementById('distro-remaining');
+                elRemaining.innerText = Utils.formatCurrency(remaining);
+                if(remaining < 0) elRemaining.style.color = 'var(--danger)';
+                else elRemaining.style.color = 'var(--primary)';
+            },
+
+            addDistro: () => {
+                const nameInp = document.getElementById('distro-name');
+                const priceInp = document.getElementById('distro-price');
+                const usage = nameInp.value.trim();
+                const amount = parseFloat(priceInp.value);
+                const currentAssigned = app.data.distribution.reduce((a,b)=>a+parseFloat(b.amount),0);
+                if(usage && amount) {
+                    app.data.distribution.push({ id: Utils.genId(), usage, amount });
+                    nameInp.value = '';
+                    priceInp.value = '';
+                    app.save();
+                    app.renderDistro();
+                }
+            },
+
+            removeDistro: (index) => {
+                app.data.distribution.splice(index, 1);
+                app.save();
+                app.renderDistro();
+            },
+
+            renderMonthlyHistory: () => {
+                const container = document.getElementById('monthly-container');
+                const allWeeks = Storage.getAllWeeksData();
+                const grouped = {};
+                allWeeks.forEach(week => {
+                    const monthName = Utils.getMonthName(week.id);
+                    if(!grouped[monthName]) grouped[monthName] = [];
+                    grouped[monthName].push(week);
+                });
+                container.innerHTML = '';
+                if(Object.keys(grouped).length === 0) {
+                    container.innerHTML = '<p class="text-muted">Sin datos.</p>';
+                    return;
+                }
+                for (const [month, weeks] of Object.entries(grouped)) {
+                    const monthCard = document.createElement('div');
+                    monthCard.className = 'card';
+                    let rows = '';
+                    weeks.forEach(w => {
+                        const tTrans = (w.transport || []).reduce((a,b)=>a+(parseFloat(b)||0),0);
+                        const tFood = (w.food || []).reduce((a,b)=>a+(parseFloat(b.price)||0),0);
+                        const tMisc = (w.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
+                        const totalExp = tTrans + tFood + tMisc;
+                        const avail = (parseFloat(w.income)||0) - totalExp - (parseFloat(w.savings)||0);
+                        rows += `
+                            <tr>
+                                <td>${w.id}</td>
+                                <td class="num-cell text-blue">${Utils.formatCurrency(w.income)}</td>
+                                <td class="num-cell text-red">${Utils.formatCurrency(totalExp)}</td>
+                                <td class="num-cell text-green">${Utils.formatCurrency(w.savings)}</td>
+                                <td class="num-cell"><strong>${Utils.formatCurrency(avail)}</strong></td>
+                            </tr>
+                        `;
+                    });
+                    monthCard.innerHTML = `
+                        <h3>${month}</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead><tr><th>Semana</th><th>Ingreso</th><th>Gastos</th><th>Ahorro</th><th>Disponible</th></tr></thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>
+                    `;
+                    container.appendChild(monthCard);
+                }
+            },
+
+            renderAnnualSummary: () => {
+                const container = document.getElementById('annual-container');
+                const allWeeks = Storage.getAllWeeksData();
+                const grouped = {};
+                allWeeks.forEach(week => {
+                    const monthName = Utils.getMonthName(week.id);
+                    if(!grouped[monthName]) grouped[monthName] = { inc:0, exp:0, sav:0 };
+                    const tTrans = (week.transport || []).reduce((a,b)=>a+(parseFloat(b)||0),0);
+                    const tFood = (week.food || []).reduce((a,b)=>a+(parseFloat(b.price)||0),0);
+                    const tMisc = (week.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
+                    grouped[monthName].inc += (parseFloat(week.income)||0);
+                    grouped[monthName].exp += (tTrans + tFood + tMisc);
+                    grouped[monthName].sav += (parseFloat(week.savings)||0);
+                });
+                container.innerHTML = '';
+                if(Object.keys(grouped).length === 0) {
+                    container.innerHTML = '<p class="text-muted">Sin datos.</p>';
+                    return;
+                }
+                let rows = '';
+                for (const [month, data] of Object.entries(grouped)) {
+                    rows += `<tr><td><strong>${month}</strong></td><td class="num-cell text-blue">${Utils.formatCurrency(data.inc)}</td><td class="num-cell text-red">${Utils.formatCurrency(data.exp)}</td><td class="num-cell text-green">${Utils.formatCurrency(data.sav)}</td></tr>`;
+                }
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<div class="table-container"><table><thead><tr><th>Mes</th><th>Total Ingresos</th><th>Total Gastos</th><th>Total Ahorrado</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+                container.appendChild(card);
+            },
+
+            updateDashboardCalculations: () => {
+                const income = parseFloat(app.data.income) || 0;
+                const savings = parseFloat(app.data.savings) || 0;
+                const transportTotal = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
+                const foodTotal = app.data.food.reduce((a,b) => a + (parseFloat(b.price)||0), 0);
+                const miscTotal = (app.data.misc || []).reduce((a,b) => a + (parseFloat(b.amount)||0), 0);
+                const totalExpenses = transportTotal + foodTotal + miscTotal;
+                const available = income - totalExpenses - savings;
+                app.realAvailable = available;
+                document.getElementById('disp-income').innerText = Utils.formatCurrency(income);
+                document.getElementById('disp-savings').innerText = Utils.formatCurrency(savings);
+                document.getElementById('disp-expenses').innerText = Utils.formatCurrency(totalExpenses);
+                document.getElementById('disp-expenses-detail').innerText = `T: ${Utils.formatCurrency(transportTotal)} | C: ${Utils.formatCurrency(foodTotal)} | V: ${Utils.formatCurrency(miscTotal)}`;
+                const elAvailable = document.getElementById('disp-available');
+                elAvailable.innerText = Utils.formatCurrency(available);
+                if(available < 0) elAvailable.style.color = 'var(--danger)';
+                else elAvailable.style.color = 'var(--success)';
+                document.getElementById('inp-income').value = income || '';
+                document.getElementById('inp-savings').value = savings || '';
+                document.getElementById('global-savings').innerText = Utils.formatCurrency(Storage.getGlobalSavings());
+            },
+
+            renderAll: () => {
+                app.updateDashboardCalculations();
+                app.renderTransportInputs();
+                app.renderFoodList();
+                app.renderMiscList();
+                app.renderDistro();
+            }
+        };
+
+        function router(viewId) {
+            document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${viewId}`).classList.add('active');
+            const btns = document.querySelectorAll('.nav-btn');
+            const map = { dashboard:0, transport:1, food:2, misc:3, savings:4, distro:5, monthly:6, annual:7 };
+            if(btns[map[viewId]]) btns[map[viewId]].classList.add('active');
+            if(viewId === 'monthly') app.renderMonthlyHistory();
+            if(viewId === 'annual') app.renderAnnualSummary();
+            if(viewId === 'distro') app.renderDistro();
+            document.getElementById('main-scroll').scrollTop = 0;
+            closeSidebarMobile();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function closeSidebarMobile() {
+            if(window.innerWidth <= 768) {
+                document.getElementById('sidebar').classList.remove('open');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
