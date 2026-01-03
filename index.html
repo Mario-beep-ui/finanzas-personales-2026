@@ -36,7 +36,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 🧵 SCROLLBAR DISCRETA Y ELEGANTE */
         .sidebar, .main-content {
             scrollbar-width: thin;
             scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
@@ -473,49 +472,7 @@
             .input-row > div { min-width: 100%; }
             .input-row > button { width: 100%; }
         }
-        
-        /* --- MEJORAS VISUALES ADICIONALES (GASTOS Y DASHBOARD) --- */
-        
-        /* Asegurar que los conceptos de gastos se vean completos (UX Mejorada) */
-        .data-main, .food-name {
-            white-space: normal !important;
-            overflow: visible !important;
-            text-overflow: clip !important;
-            line-height: 1.4;
-        }
 
-        /* Estilo lista bancaria en Dashboard */
-        .bank-list {
-            margin-top: 1rem;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            padding-top: 0.5rem;
-        }
-
-        .bank-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            font-size: 0.85rem;
-            border-bottom: 1px dashed var(--border);
-        }
-
-        .bank-item:last-child {
-            border-bottom: none;
-        }
-
-        .bank-item-name {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .bank-item-value {
-            color: var(--primary);
-            font-weight: 700;
-            font-family: 'Consolas', monospace;
-        }
-
-        /* Inputs pequeños para distribución */
         .input-mini {
             padding: 6px 10px;
             border: 1px solid var(--border);
@@ -616,7 +573,6 @@
                     <input type="number" id="inp-income" placeholder="0.00" oninput="app.updateIncome(this.value)">
                 </div>
 
-                <!-- SECCIÓN NUEVOS INGRESOS EXTRA -->
                 <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
                     <label style="color: var(--success); font-weight: 600;">➕ Ingresos Extra / Adicionales</label>
                     <div class="input-row" style="margin-bottom: 0.5rem;">
@@ -626,25 +582,21 @@
                         <div>
                             <input type="number" id="extra-amount" placeholder="0.00">
                         </div>
-                        <button class="btn btn-primary" onclick="app.addExtraIncome()">
-                            +
-                        </button>
+                        <button class="btn btn-primary" onclick="app.addExtraIncome()">+</button>
                     </div>
-                    <ul class="data-list" id="extra-income-list" style="margin-bottom: 0;">
-                        <!-- Lista de ingresos extra -->
-                    </ul>
+                    <ul class="data-list" id="extra-income-list"></ul>
                 </div>
             </div>
 
             <div class="summary-grid">
                 <div class="stat-card primary">
-                    <div class="stat-label">Ingreso Total (Base + Extras)</div>
+                    <div class="stat-label">Ingreso Total</div>
                     <div class="stat-value" id="disp-income">$0.00</div>
-                    <div class="stat-sub">Semana actual</div>
+                    <div class="stat-sub">Base + Extras</div>
                 </div>
                 
                 <div class="stat-card danger">
-                    <div class="stat-label">Total Gastos</div>
+                    <div class="stat-label">Total Gastos Reales</div>
                     <div class="stat-value" id="disp-expenses">$0.00</div>
                     <div class="stat-sub" id="disp-expenses-detail">...</div>
                 </div>
@@ -658,19 +610,8 @@
                 <div class="stat-card success" style="border-left-width: 6px;">
                     <div class="stat-label">DINERO REAL DISPONIBLE</div>
                     <div class="stat-value" id="disp-available">$0.00</div>
-                    <div class="stat-sub">Para distribución libre</div>
-                    <!-- Desglose bancario -->
-                    <div class="bank-list" id="dashboard-bank-distro">
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3 style="margin-bottom:1rem; font-size:1rem; color:var(--text-muted);">Acciones Rápidas</h3>
-                <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('transport')">🚌 Pasaje</button>
-                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('food')">🍔 Comida</button>
-                    <button class="btn btn-ghost" style="border:1px solid var(--border)" onclick="router('misc')">💸 Variados</button>
+                    <div class="stat-sub">Saldo sin distribuir</div>
+                    <div class="bank-list" id="dashboard-bank-distro"></div>
                 </div>
             </div>
         </section>
@@ -679,19 +620,18 @@
         <section id="view-transport" class="section-view">
             <h2>Registro de Transporte</h2>
             <div class="card">
-                <div class="day-grid" id="transport-grid">
-                </div>
+                <div class="day-grid" id="transport-grid"></div>
                 <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
                     <span style="color: var(--text-muted); margin-right: 10px;">Total Transporte Semanal:</span>
                     <strong style="font-size: 1.5rem; color: var(--primary);" id="trans-total">$0.00</strong>
                 </div>
             </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">ℹ️ El transporte se deduce automáticamente del ingreso base ya que es un gasto operativo fijo.</p>
         </section>
 
         <!-- 3️⃣ FOOD VIEW -->
         <section id="view-food" class="section-view">
             <h2>Comida de Trabajo</h2>
-            
             <div class="card">
                 <div class="input-row">
                     <div style="flex: 2;">
@@ -702,58 +642,47 @@
                         <label>Precio</label>
                         <input type="number" id="food-price" placeholder="0.00">
                     </div>
-                    <button class="btn btn-primary" onclick="app.addFood()">
-                        + Agregar
-                    </button>
+                    <button class="btn btn-primary" onclick="app.addFood()">+ Agregar</button>
                 </div>
-
-                <ul class="food-list" id="food-list-container">
-                </ul>
-                
+                <ul class="food-list" id="food-list-container"></ul>
                 <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
                     <span style="color: var(--text-muted); margin-right: 10px;">Total Comida:</span>
                     <strong style="font-size: 1.5rem; color: var(--primary);" id="food-total">$0.00</strong>
                 </div>
             </div>
+            <p style="font-size: 0.8rem; color: var(--text-muted); padding: 10px;">ℹ️ Si tienes una división llamada "Comida", se descontará de ahí prioritariamente.</p>
         </section>
 
         <!-- GASTOS VARIADOS VIEW -->
         <section id="view-misc" class="section-view">
-            <h2>Gastos Variados (No recurrentes)</h2>
+            <h2>Gastos Variados</h2>
             <div class="card">
                 <div class="input-row">
                     <div>
                         <label>Día</label>
-                        <select id="misc-day">
-                        </select>
+                        <select id="misc-day"></select>
                     </div>
                     <div style="flex: 2;">
                         <label>Descripción</label>
-                        <input type="text" id="misc-desc" placeholder="Ej. Regalo, Reparación...">
+                        <input type="text" id="misc-desc" placeholder="Ej. Salida cine...">
                     </div>
                     <div>
                         <label>Monto</label>
                         <input type="number" id="misc-price" placeholder="0.00">
                     </div>
-                    <button class="btn btn-primary" onclick="app.addMisc()">+ Gasto</button>
                 </div>
+                <div class="form-group">
+                    <label>¿De dónde descontar este gasto?</label>
+                    <select id="misc-origin-select">
+                        <option value="available">Dinero Disponible General</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary w-full" onclick="app.addMisc()">Registrar Gasto</button>
 
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">💡 Haz clic en un gasto para editarlo o eliminarlo.</p>
-                <ul class="data-list" id="misc-list-container">
-                </ul>
-                
+                <ul class="data-list mt-4" id="misc-list-container"></ul>
                 <div class="mt-4" style="text-align: right; border-top: 1px solid var(--border); padding-top: 1rem;">
                     <span style="color: var(--text-muted); margin-right: 10px;">Total Variados:</span>
                     <strong style="font-size: 1.5rem; color: var(--primary);" id="misc-total">$0.00</strong>
-                </div>
-            </div>
-
-            <!-- Historial -->
-            <div class="card">
-                <button class="btn btn-outline w-full" onclick="app.toggleMiscHistory()">
-                    <span>📜 Ver / Ocultar historial</span>
-                </button>
-                <div id="misc-history-container" class="hidden mt-4">
                 </div>
             </div>
         </section>
@@ -766,11 +695,7 @@
                 <div style="display: flex; gap: 10px;">
                     <input type="number" id="inp-savings" placeholder="0.00" oninput="app.updateSavings(this.value)">
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem;">
-                    ℹ️ El ahorro se restará inmediatamente de tu dinero disponible.
-                </p>
             </div>
-
             <div class="summary-grid">
                 <div class="stat-card success">
                     <div class="stat-label">Acumulado Histórico</div>
@@ -783,54 +708,39 @@
         <!-- DISTRIBUCIÓN VIEW -->
         <section id="view-distro" class="section-view">
             <h2>Distribución de Dinero Disponible</h2>
-            
             <div class="summary-grid mb-4">
                 <div class="stat-card success">
-                    <div class="stat-label">Dinero Real Disponible</div>
+                    <div class="stat-label">Saldo Inicial para Distribución</div>
                     <div class="stat-value" id="distro-available">$0.00</div>
                 </div>
-                <!-- Nueva tarjeta de estado de distribución -->
                 <div class="stat-card warning" id="distro-status-card">
                     <div class="stat-label">Restante por asignar</div>
                     <div class="stat-value" id="distro-remaining">$0.00</div>
                 </div>
             </div>
-
             <div class="card">
                 <div class="input-row">
                     <div style="flex: 2;">
                         <label>Añadir Nueva División</label>
-                        <input type="text" id="distro-name" placeholder="Ej. Supermercado, Salida cine...">
+                        <input type="text" id="distro-name" placeholder="Ej. Supermercado, Entretenimiento...">
                     </div>
-                    <button class="btn btn-primary" onclick="app.addDistro()">
-                        + Añadir
-                    </button>
+                    <button class="btn btn-primary" onclick="app.addDistro()">+ Añadir</button>
                 </div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
-                    ℹ️ Escribe manualmente la cantidad a asignar a cada división.
-                </p>
-
-                <ul class="data-list" id="distro-list-container">
-                </ul>
+                <ul class="data-list" id="distro-list-container"></ul>
             </div>
         </section>
 
         <!-- HISTORIAL MENSUAL VIEW -->
         <section id="view-monthly" class="section-view">
             <h2>Historial Mensual</h2>
-            <p class="mb-2" style="color:var(--text-muted)">Resumen de semanas agrupadas por mes.</p>
-            <div id="monthly-container">
-            </div>
+            <div id="monthly-container"></div>
         </section>
 
         <!-- RESUMEN ANUAL VIEW -->
         <section id="view-annual" class="section-view">
             <h2>Resumen Anual</h2>
-            <p class="mb-2" style="color:var(--text-muted)">Desempeño financiero mes a mes.</p>
-            <div id="annual-container">
-            </div>
+            <div id="annual-container"></div>
         </section>
-
     </main>
 
     <!-- Modal Editar Gastos -->
@@ -854,13 +764,8 @@
     </div>
 
     <script>
-        /**
-         * 🧠 LOGIC ENGINE
-         */
         const Utils = {
-            formatCurrency: (num) => {
-                return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(num || 0);
-            },
+            formatCurrency: (num) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(num || 0),
             getCurrentWeekID: () => {
                 const now = new Date();
                 const day = now.getDay();
@@ -878,11 +783,7 @@
                 for(let i=0; i<7; i++) {
                     const d = new Date(localDate);
                     d.setDate(localDate.getDate() + i);
-                    result.push({
-                        label: days[d.getDay()],
-                        key: `day_${i}`,
-                        dateShort: `${d.getDate()}/${d.getMonth()+1}`
-                    });
+                    result.push({ label: days[d.getDay()], key: `day_${i}`, dateShort: `${d.getDate()}/${d.getMonth()+1}` });
                 }
                 return result;
             },
@@ -891,9 +792,6 @@
                 const parts = dateStr.split('-');
                 const d = new Date(parts[0], parts[1]-1, parts[2]);
                 return d.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' }).toUpperCase();
-            },
-            getYear: (dateStr) => {
-                return dateStr.split('-')[0];
             }
         };
 
@@ -901,36 +799,21 @@
             getKey: (weekId) => `fintech_week_${weekId}`,
             getData: (weekId) => {
                 const raw = localStorage.getItem(Storage.getKey(weekId));
-                let data;
-                if (raw) {
-                    data = JSON.parse(raw);
-                } else {
-                    data = {
-                        id: weekId,
-                        income: 0,
-                        savings: 0,
-                        transport: [0,0,0,0,0,0,0],
-                        food: [],
-                        misc: [],
-                        distribution: [],
-                        extraIncome: [] // Agregado: Soporte para ingresos extra
-                    };
-                }
+                let data = raw ? JSON.parse(raw) : {
+                    id: weekId, income: 0, savings: 0, transport: [0,0,0,0,0,0,0], food: [], misc: [], distribution: [], extraIncome: []
+                };
                 if(!data.misc) data.misc = [];
                 if(!data.distribution) data.distribution = [];
-                if(!data.extraIncome) data.extraIncome = []; // Retrocompatibilidad
+                if(!data.extraIncome) data.extraIncome = [];
                 return data;
             },
-            saveData: (weekId, data) => {
-                localStorage.setItem(Storage.getKey(weekId), JSON.stringify(data));
-            },
+            saveData: (weekId, data) => localStorage.setItem(Storage.getKey(weekId), JSON.stringify(data)),
             getGlobalSavings: () => {
                 let total = 0;
                 for (let i = 0; i < localStorage.length; i++){
                     const key = localStorage.key(i);
                     if(key.startsWith('fintech_week_')) {
-                        const data = JSON.parse(localStorage.getItem(key));
-                        total += (parseFloat(data.savings) || 0);
+                        total += (parseFloat(JSON.parse(localStorage.getItem(key)).savings) || 0);
                     }
                 }
                 return total;
@@ -939,9 +822,7 @@
                 const weeks = [];
                 for (let i = 0; i < localStorage.length; i++){
                     const key = localStorage.key(i);
-                    if(key.startsWith('fintech_week_')) {
-                        weeks.push(JSON.parse(localStorage.getItem(key)));
-                    }
+                    if(key.startsWith('fintech_week_')) weeks.push(JSON.parse(localStorage.getItem(key)));
                 }
                 return weeks.sort((a, b) => b.id.localeCompare(a.id));
             }
@@ -950,8 +831,8 @@
         const app = {
             currentWeekId: null,
             data: null,
-            realAvailable: 0,
-            editingItem: null, // Guardar referencia al item editado
+            rawAvailable: 0, // El dinero disponible antes de descontar gastos elegidos
+            editingItem: null,
 
             init: () => {
                 app.currentWeekId = Utils.getCurrentWeekID();
@@ -959,14 +840,15 @@
                 document.getElementById('nav-week-id').innerText = app.currentWeekId;
                 const now = new Date();
                 document.getElementById('current-date-display').innerText = now.toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
                 const daySelect = document.getElementById('misc-day');
-                const weekDays = Utils.getWeekDays(app.currentWeekId);
-                weekDays.forEach(day => {
+                Utils.getWeekDays(app.currentWeekId).forEach(day => {
                     const opt = document.createElement('option');
                     opt.value = day.label;
                     opt.text = `${day.label} (${day.dateShort})`;
                     daySelect.appendChild(opt);
                 });
+                
                 app.renderAll();
             },
 
@@ -975,51 +857,176 @@
                 app.updateDashboardCalculations();
             },
 
-            updateIncome: (val) => {
-                app.data.income = parseFloat(val) || 0;
-                app.save();
-            },
+            updateIncome: (val) => { app.data.income = parseFloat(val) || 0; app.save(); },
+            updateSavings: (val) => { app.data.savings = parseFloat(val) || 0; app.save(); },
 
-            updateSavings: (val) => {
-                app.data.savings = parseFloat(val) || 0;
-                app.save();
-            },
-
-            // --- Lógica Ingresos Extra ---
             addExtraIncome: () => {
                 const conceptInp = document.getElementById('extra-concept');
                 const amountInp = document.getElementById('extra-amount');
-                const concept = conceptInp.value.trim();
-                const amount = parseFloat(amountInp.value);
-                if (concept && amount) {
-                    app.data.extraIncome.push({ id: Utils.genId(), concept, amount });
-                    conceptInp.value = '';
-                    amountInp.value = '';
+                if (conceptInp.value && amountInp.value) {
+                    app.data.extraIncome.push({ id: Utils.genId(), concept: conceptInp.value, amount: parseFloat(amountInp.value) });
+                    conceptInp.value = ''; amountInp.value = '';
                     app.save();
-                    app.renderExtraIncome();
                 }
             },
-            
-            removeExtraIncome: (index) => {
-                app.data.extraIncome.splice(index, 1);
+
+            removeExtraIncome: (index) => { app.data.extraIncome.splice(index, 1); app.save(); },
+
+            updateTransport: (index, val) => { app.data.transport[index] = parseFloat(val) || 0; app.save(); app.renderTransportInputs(); },
+
+            addFood: () => {
+                const nameInp = document.getElementById('food-name');
+                const priceInp = document.getElementById('food-price');
+                if(nameInp.value && priceInp.value) {
+                    const price = parseFloat(priceInp.value);
+                    // Lógica especial: Buscar si hay una bolsa de "Comida" o "Alimentación"
+                    const foodBag = app.data.distribution.find(d => 
+                        d.usage.toLowerCase().includes('comida') || 
+                        d.usage.toLowerCase().includes('alimento') ||
+                        d.usage.toLowerCase().includes('lunch')
+                    );
+                    
+                    app.data.food.push({ 
+                        id: Utils.genId(), 
+                        name: nameInp.value, 
+                        price: price,
+                        originId: foodBag ? foodBag.id : 'available' 
+                    });
+
+                    // Si se encontró bolsa, descontar de ahí
+                    if(foodBag) {
+                        foodBag.amount = Math.max(0, (foodBag.amount || 0) - price);
+                    }
+
+                    nameInp.value = ''; priceInp.value = '';
+                    app.save();
+                }
+            },
+
+            addMisc: () => {
+                const descInp = document.getElementById('misc-desc');
+                const priceInp = document.getElementById('misc-price');
+                const originId = document.getElementById('misc-origin-select').value;
+                const day = document.getElementById('misc-day').value;
+
+                if(descInp.value && priceInp.value) {
+                    const amount = parseFloat(priceInp.value);
+                    
+                    // Si el origen es una división específica, descontar de ella
+                    if(originId !== 'available') {
+                        const bag = app.data.distribution.find(d => d.id === originId);
+                        if(bag) bag.amount = (bag.amount || 0) - amount;
+                    }
+
+                    app.data.misc.push({ 
+                        id: Utils.genId(), 
+                        day, 
+                        desc: descInp.value, 
+                        amount, 
+                        originId 
+                    });
+
+                    descInp.value = ''; priceInp.value = '';
+                    app.save();
+                    app.renderMiscList();
+                }
+            },
+
+            addDistro: () => {
+                const nameInp = document.getElementById('distro-name');
+                if(nameInp.value) {
+                    app.data.distribution.push({ id: Utils.genId(), usage: nameInp.value, amount: 0 });
+                    nameInp.value = '';
+                    app.save();
+                }
+            },
+
+            updateDistroAmount: (index, val) => {
+                app.data.distribution[index].amount = parseFloat(val) || 0;
                 app.save();
+            },
+
+            removeDistro: (index) => {
+                app.data.distribution.splice(index, 1);
+                app.save();
+            },
+
+            updateDashboardCalculations: () => {
+                const baseIncome = parseFloat(app.data.income) || 0;
+                const extraTotal = app.data.extraIncome.reduce((a, b) => a + (parseFloat(b.amount)||0), 0);
+                const totalIncome = baseIncome + extraTotal;
+                const savings = parseFloat(app.data.savings) || 0;
+                
+                // Gastos fijos (Transporte siempre sale de la base)
+                const transportTotal = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
+                
+                // Gastos que salen de lo "Disponible" (no de bolsas específicas)
+                const foodFromAvailable = app.data.food
+                    .filter(f => f.originId === 'available')
+                    .reduce((a,b) => a + (parseFloat(b.price)||0), 0);
+                
+                const miscFromAvailable = app.data.misc
+                    .filter(m => m.originId === 'available')
+                    .reduce((a,b) => a + (parseFloat(b.amount)||0), 0);
+
+                // El Disponible Real es el dinero que queda para asignar a bolsas o gastar libremente
+                // No restamos los gastos que salieron de bolsas porque ya bajaron el saldo de la bolsa
+                const expensesFromAvailable = transportTotal + foodFromAvailable + miscFromAvailable;
+                const available = totalIncome - savings - expensesFromAvailable;
+                
+                app.rawAvailable = available;
+
+                document.getElementById('disp-income').innerText = Utils.formatCurrency(totalIncome);
+                document.getElementById('disp-savings').innerText = Utils.formatCurrency(savings);
+                
+                // Mostrar total de gastos realizados en la semana para info
+                const totalExpensesEver = transportTotal + 
+                    app.data.food.reduce((a,b)=>a+b.price, 0) + 
+                    app.data.misc.reduce((a,b)=>a+b.amount, 0);
+                
+                document.getElementById('disp-expenses').innerText = Utils.formatCurrency(totalExpensesEver);
+                document.getElementById('disp-expenses-detail').innerText = `T: ${Utils.formatCurrency(transportTotal)} | C: ${Utils.formatCurrency(app.data.food.reduce((a,b)=>a+b.price,0))} | V: ${Utils.formatCurrency(app.data.misc.reduce((a,b)=>a+b.amount,0))}`;
+                
+                const elAvailable = document.getElementById('disp-available');
+                elAvailable.innerText = Utils.formatCurrency(available);
+                elAvailable.style.color = available < 0 ? 'var(--danger)' : 'var(--success)';
+                
+                document.getElementById('inp-income').value = baseIncome || '';
+                document.getElementById('inp-savings').value = savings || '';
+                document.getElementById('global-savings').innerText = Utils.formatCurrency(Storage.getGlobalSavings());
+                
+                app.updateOriginSelectors();
+                app.renderAllLists();
+            },
+
+            updateOriginSelectors: () => {
+                const select = document.getElementById('misc-origin-select');
+                const currentVal = select.value;
+                select.innerHTML = '<option value="available">Dinero Disponible General</option>';
+                app.data.distribution.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.text = `${d.usage} (Saldo: ${Utils.formatCurrency(d.amount)})`;
+                    select.appendChild(opt);
+                });
+                select.value = currentVal;
+            },
+
+            renderAllLists: () => {
                 app.renderExtraIncome();
+                app.renderTransportInputs();
+                app.renderFoodList();
+                app.renderMiscList();
+                app.renderDistro();
             },
 
             renderExtraIncome: () => {
                 const list = document.getElementById('extra-income-list');
                 list.innerHTML = '';
-                (app.data.extraIncome || []).forEach((item, index) => {
+                app.data.extraIncome.forEach((item, index) => {
                     const li = document.createElement('li');
                     li.className = 'data-item';
-                    li.style.borderBottom = '1px dashed #e2e8f0';
-                    li.innerHTML = `
-                        <div class="data-info">
-                            <span class="data-main" style="font-size:0.9rem;">${item.concept}</span>
-                            <span class="data-sub text-success">+ ${Utils.formatCurrency(item.amount)}</span>
-                        </div>
-                        <button class="btn btn-ghost" style="padding:4px;" onclick="app.removeExtraIncome(${index})">🗑️</button>
-                    `;
+                    li.innerHTML = `<div class="data-info"><span class="data-main">${item.concept}</span><span class="data-sub text-success">+ ${Utils.formatCurrency(item.amount)}</span></div><button class="btn btn-ghost" onclick="app.removeExtraIncome(${index})">🗑️</button>`;
                     list.appendChild(li);
                 });
             },
@@ -1027,576 +1034,180 @@
             renderTransportInputs: () => {
                 const grid = document.getElementById('transport-grid');
                 grid.innerHTML = '';
-                const days = Utils.getWeekDays(app.currentWeekId);
-                days.forEach((day, index) => {
-                    const val = app.data.transport[index] || '';
+                const total = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
+                Utils.getWeekDays(app.currentWeekId).forEach((day, index) => {
                     const div = document.createElement('div');
                     div.className = 'day-card';
-                    div.innerHTML = `
-                        <div class="day-name">${day.label} <span style="font-weight:400; font-size:0.8em; color:#94a3b8">(${day.dateShort})</span></div>
-                        <input type="number" placeholder="0" value="${val}" onchange="app.updateTransport(${index}, this.value)">
-                    `;
+                    div.innerHTML = `<div class="day-name">${day.label}</div><input type="number" value="${app.data.transport[index] || ''}" onchange="app.updateTransport(${index}, this.value)">`;
                     grid.appendChild(div);
                 });
-                const total = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
                 document.getElementById('trans-total').innerText = Utils.formatCurrency(total);
-            },
-
-            updateTransport: (dayIndex, val) => {
-                app.data.transport[dayIndex] = parseFloat(val) || 0;
-                app.save();
-                app.renderTransportInputs();
             },
 
             renderFoodList: () => {
                 const list = document.getElementById('food-list-container');
                 list.innerHTML = '';
-                let total = 0;
                 app.data.food.forEach((item, index) => {
-                    total += parseFloat(item.price);
                     const li = document.createElement('li');
                     li.className = 'food-item';
                     li.onclick = () => app.openEditModal('food', index);
-                    li.innerHTML = `
-                        <div class="food-info">
-                            <span class="food-name">${item.name}</span>
-                            <span class="food-cost">${Utils.formatCurrency(item.price)}</span>
-                        </div>
-                        <span style="font-size:1.2rem; color:var(--text-muted)">✎</span>
-                    `;
+                    li.innerHTML = `<div class="food-info"><span class="food-name">${item.name}</span><span class="food-cost">${Utils.formatCurrency(item.price)} (${item.originId === 'available' ? 'Disponible' : 'Bolsa Comida'})</span></div><span>✎</span>`;
                     list.appendChild(li);
                 });
-                if(app.data.food.length === 0) {
-                    list.innerHTML = '<li style="padding:1rem; text-align:center; color:#94a3b8;">No hay comidas registradas.</li>';
-                }
-                document.getElementById('food-total').innerText = Utils.formatCurrency(total);
-            },
-
-            addFood: () => {
-                const nameInp = document.getElementById('food-name');
-                const priceInp = document.getElementById('food-price');
-                const name = nameInp.value.trim();
-                const price = parseFloat(priceInp.value);
-                if(name && price) {
-                    app.data.food.push({ id: Utils.genId(), name, price });
-                    nameInp.value = '';
-                    priceInp.value = '';
-                    app.save();
-                    app.renderFoodList();
-                }
+                document.getElementById('food-total').innerText = Utils.formatCurrency(app.data.food.reduce((a,b)=>a+b.price, 0));
             },
 
             renderMiscList: () => {
                 const list = document.getElementById('misc-list-container');
                 list.innerHTML = '';
-                let total = 0;
                 app.data.misc.forEach((item, index) => {
-                    total += parseFloat(item.amount);
+                    const bagName = item.originId === 'available' ? 'Disponible' : (app.data.distribution.find(d => d.id === item.originId)?.usage || 'Bolsa eliminada');
                     const li = document.createElement('li');
                     li.className = 'data-item';
                     li.onclick = () => app.openEditModal('misc', index);
-                    li.innerHTML = `
-                        <div class="data-info">
-                            <span class="data-main">${item.desc}</span>
-                            <span class="data-sub">${item.day} - ${Utils.formatCurrency(item.amount)}</span>
-                        </div>
-                        <span style="font-size:1.2rem; color:var(--text-muted)">✎</span>
-                    `;
+                    li.innerHTML = `<div class="data-info"><span class="data-main">${item.desc}</span><span class="data-sub">${item.day} - ${Utils.formatCurrency(item.amount)} [De: ${bagName}]</span></div><span>✎</span>`;
                     list.appendChild(li);
                 });
-                if(app.data.misc.length === 0) {
-                    list.innerHTML = '<li style="padding:1rem; text-align:center; color:#94a3b8;">Sin gastos variados.</li>';
-                }
-                document.getElementById('misc-total').innerText = Utils.formatCurrency(total);
-            },
-
-            addMisc: () => {
-                const day = document.getElementById('misc-day').value;
-                const descInp = document.getElementById('misc-desc');
-                const priceInp = document.getElementById('misc-price');
-                const desc = descInp.value.trim();
-                const amount = parseFloat(priceInp.value);
-                if(desc && amount) {
-                    app.data.misc.push({ id: Utils.genId(), day, desc, amount });
-                    descInp.value = '';
-                    priceInp.value = '';
-                    app.save();
-                    app.renderMiscList();
-                }
-            },
-
-            // Modal Logic
-            openEditModal: (type, index) => {
-                app.editingItem = { type, index };
-                const item = app.data[type][index];
-                document.getElementById('modal-title').innerText = type === 'misc' ? 'Editar Gasto Variado' : 'Editar Comida';
-                document.getElementById('modal-desc').value = type === 'misc' ? item.desc : item.name;
-                document.getElementById('modal-amount').value = type === 'misc' ? item.amount : item.price;
-                document.getElementById('edit-modal').style.display = 'flex';
-            },
-
-            closeModal: (e) => {
-                if(!e || e.target.id === 'edit-modal') {
-                    document.getElementById('edit-modal').style.display = 'none';
-                    app.editingItem = null;
-                }
-            },
-
-            saveEdit: () => {
-                if(!app.editingItem) return;
-                const { type, index } = app.editingItem;
-                const desc = document.getElementById('modal-desc').value.trim();
-                const amount = parseFloat(document.getElementById('modal-amount').value);
-                if(desc && amount) {
-                    if(type === 'misc') {
-                        app.data.misc[index].desc = desc;
-                        app.data.misc[index].amount = amount;
-                    } else {
-                        app.data.food[index].name = desc;
-                        app.data.food[index].price = amount;
-                    }
-                    app.save();
-                    app.renderFoodList();
-                    app.renderMiscList();
-                    app.closeModal(null);
-                }
-            },
-
-            deleteFromModal: () => {
-                if(!app.editingItem) return;
-                const { type, index } = app.editingItem;
-                app.data[type].splice(index, 1);
-                app.save();
-                app.renderFoodList();
-                app.renderMiscList();
-                app.closeModal(null);
-            },
-
-            toggleMiscHistory: () => {
-                const container = document.getElementById('misc-history-container');
-                const isHidden = container.classList.contains('hidden');
-                if(isHidden) {
-                    container.classList.remove('hidden');
-                    const allWeeks = Storage.getAllWeeksData();
-                    const pastWeeks = allWeeks.filter(w => w.id !== app.currentWeekId);
-                    container.innerHTML = '';
-                    if(pastWeeks.length === 0) {
-                        container.innerHTML = '<p style="padding:1rem; text-align:center;">No hay historial.</p>';
-                        return;
-                    }
-                    pastWeeks.forEach(week => {
-                        const miscTotal = (week.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
-                        if(miscTotal > 0) {
-                            const div = document.createElement('div');
-                            div.className = 'card';
-                            div.style.border = '1px solid #e2e8f0';
-                            div.style.backgroundColor = '#f8fafc';
-                            let itemsHtml = (week.misc || []).map(m => `<li>${m.day}: ${m.desc} (${Utils.formatCurrency(m.amount)})</li>`).join('');
-                            div.innerHTML = `
-                                <div style="display:flex; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:5px;">
-                                    <strong>Semana: ${week.id}</strong>
-                                    <span class="text-danger">Total: ${Utils.formatCurrency(miscTotal)}</span>
-                                </div>
-                                <ul style="font-size:0.9rem; padding-left:20px; color:var(--text-muted)">${itemsHtml}</ul>
-                            `;
-                            container.appendChild(div);
-                        }
-                    });
-                } else {
-                    container.classList.add('hidden');
-                }
+                document.getElementById('misc-total').innerText = Utils.formatCurrency(app.data.misc.reduce((a,b)=>a+b.amount, 0));
             },
 
             renderDistro: () => {
                 const list = document.getElementById('distro-list-container');
                 const dashList = document.getElementById('dashboard-bank-distro');
-                const elAvailable = document.getElementById('distro-available');
-                const elRemaining = document.getElementById('distro-remaining');
-                const elStatusCard = document.getElementById('distro-status-card');
+                list.innerHTML = ''; dashList.innerHTML = '';
                 
-                list.innerHTML = '';
-                dashList.innerHTML = '';
-                
-                // Actualizar encabezados
-                elAvailable.innerText = Utils.formatCurrency(app.realAvailable);
-                
-                // Calcular totales
+                document.getElementById('distro-available').innerText = Utils.formatCurrency(app.rawAvailable);
                 let totalAssigned = 0;
                 app.data.distribution.forEach(d => totalAssigned += (parseFloat(d.amount) || 0));
                 
-                const remaining = app.realAvailable - totalAssigned;
-                elRemaining.innerText = Utils.formatCurrency(remaining);
-                
-                // Validación visual de presupuesto excedido
-                if (remaining < 0) {
-                    elStatusCard.className = 'stat-card danger';
-                    elStatusCard.querySelector('.stat-label').innerText = "⚠️ Excedido por";
-                    elRemaining.innerText = Utils.formatCurrency(Math.abs(remaining));
-                } else if (remaining === 0) {
-                    elStatusCard.className = 'stat-card success';
-                    elStatusCard.querySelector('.stat-label').innerText = "Distribución Completa";
-                } else {
-                    elStatusCard.className = 'stat-card warning';
-                    elStatusCard.querySelector('.stat-label').innerText = "Restante por asignar";
-                }
+                const remaining = app.rawAvailable - totalAssigned;
+                document.getElementById('distro-remaining').innerText = Utils.formatCurrency(remaining);
+                document.getElementById('distro-status-card').className = remaining < 0 ? 'stat-card danger' : (remaining === 0 ? 'stat-card success' : 'stat-card warning');
 
                 app.data.distribution.forEach((item, index) => {
-                    const amountVal = item.amount || 0;
-                    
-                    // Main Distro View (Ahora con INPUT)
                     const li = document.createElement('li');
                     li.className = 'data-item';
-                    li.innerHTML = `
-                        <div class="data-info" style="flex-direction:row; align-items:center; justify-content:space-between; width:100%">
-                            <span class="data-main">${item.usage}</span>
-                            <div style="display:flex; gap:10px; align-items:center;">
-                                <input type="number" class="input-mini" placeholder="0.00" 
-                                       value="${amountVal === 0 ? '' : amountVal}" 
-                                       onchange="app.updateDistroAmount(${index}, this.value)">
-                                <button class="btn btn-ghost" style="padding:4px;" onclick="app.removeDistro(${index})">×</button>
-                            </div>
-                        </div>
-                    `;
+                    li.innerHTML = `<div class="data-info" style="flex-direction:row; justify-content:space-between; width:100%"><span class="data-main">${item.usage}</span><div style="display:flex; gap:10px;"><input type="number" class="input-mini" value="${item.amount || ''}" onchange="app.updateDistroAmount(${index}, this.value)"><button class="btn btn-ghost" onclick="app.removeDistro(${index})">×</button></div></div>`;
                     list.appendChild(li);
 
-                    // Dashboard Distro View
                     const bItem = document.createElement('div');
                     bItem.className = 'bank-item';
-                    bItem.innerHTML = `
-                        <span class="bank-item-name">${item.usage}</span>
-                        <span class="bank-item-value">${Utils.formatCurrency(amountVal)}</span>
-                    `;
+                    bItem.innerHTML = `<span class="bank-item-name">${item.usage}</span><span class="bank-item-value">${Utils.formatCurrency(item.amount)}</span>`;
                     dashList.appendChild(bItem);
                 });
             },
 
-            addDistro: () => {
-                const nameInp = document.getElementById('distro-name');
-                const usage = nameInp.value.trim();
-                if(usage) {
-                    app.data.distribution.push({ id: Utils.genId(), usage, amount: 0 }); // Inicia en 0
-                    nameInp.value = '';
-                    app.save();
-                    app.renderDistro();
+            openEditModal: (type, index) => {
+                app.editingItem = { type, index };
+                const item = app.data[type][index];
+                document.getElementById('modal-title').innerText = 'Editar Registro';
+                document.getElementById('modal-desc').value = type === 'misc' ? item.desc : item.name;
+                document.getElementById('modal-amount').value = type === 'misc' ? item.amount : item.price;
+                document.getElementById('edit-modal').style.display = 'flex';
+            },
+
+            closeModal: (e) => { if(!e || e.target.id === 'edit-modal') document.getElementById('edit-modal').style.display = 'none'; },
+
+            saveEdit: () => {
+                const { type, index } = app.editingItem;
+                const newAmount = parseFloat(document.getElementById('modal-amount').value);
+                const oldItem = app.data[type][index];
+                
+                // Si el gasto era de una bolsa, ajustar la bolsa por la diferencia
+                if(oldItem.originId && oldItem.originId !== 'available') {
+                    const bag = app.data.distribution.find(d => d.id === oldItem.originId);
+                    if(bag) {
+                        const diff = (type === 'misc' ? oldItem.amount : oldItem.price) - newAmount;
+                        bag.amount += diff;
+                    }
                 }
+
+                if(type === 'misc') {
+                    app.data.misc[index].desc = document.getElementById('modal-desc').value;
+                    app.data.misc[index].amount = newAmount;
+                } else {
+                    app.data.food[index].name = document.getElementById('modal-desc').value;
+                    app.data.food[index].price = newAmount;
+                }
+                app.save(); app.closeModal();
             },
 
-            updateDistroAmount: (index, val) => {
-                const newAmount = parseFloat(val) || 0;
-                app.data.distribution[index].amount = newAmount;
-                app.save();
-                app.renderDistro(); // Re-validar totales
-            },
-
-            removeDistro: (index) => {
-                app.data.distribution.splice(index, 1);
-                app.save();
-                app.renderDistro();
+            deleteFromModal: () => {
+                const { type, index } = app.editingItem;
+                const item = app.data[type][index];
+                
+                // Devolver dinero a la bolsa si corresponde
+                if(item.originId && item.originId !== 'available') {
+                    const bag = app.data.distribution.find(d => d.id === item.originId);
+                    if(bag) bag.amount += (type === 'misc' ? item.amount : item.price);
+                }
+                
+                app.data[type].splice(index, 1);
+                app.save(); app.closeModal();
             },
 
             renderMonthlyHistory: () => {
                 const container = document.getElementById('monthly-container');
-                const allWeeks = Storage.getAllWeeksData();
                 const grouped = {};
-                allWeeks.forEach(week => {
-                    const monthName = Utils.getMonthName(week.id);
-                    if(!grouped[monthName]) grouped[monthName] = [];
-                    grouped[monthName].push(week);
+                Storage.getAllWeeksData().forEach(week => {
+                    const m = Utils.getMonthName(week.id);
+                    if(!grouped[m]) grouped[m] = []; grouped[m].push(week);
                 });
                 container.innerHTML = '';
-                if(Object.keys(grouped).length === 0) {
-                    container.innerHTML = '<p class="text-muted">Sin datos.</p>';
-                    return;
-                }
                 for (const [month, weeks] of Object.entries(grouped)) {
-                    const monthCard = document.createElement('div');
-                    monthCard.className = 'card';
-                    let rows = '';
-                    weeks.forEach(w => {
-                        // Calcular ingresos totales (base + extras)
-                        const extras = (w.extraIncome || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
-                        const totalInc = (parseFloat(w.income)||0) + extras;
-                        
-                        const tTrans = (w.transport || []).reduce((a,b)=>a+(parseFloat(b)||0),0);
-                        const tFood = (w.food || []).reduce((a,b)=>a+(parseFloat(b.price)||0),0);
-                        const tMisc = (w.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
-                        const totalExp = tTrans + tFood + tMisc;
-                        const avail = totalInc - totalExp - (parseFloat(w.savings)||0);
-                        
-                        rows += `
-                            <tr>
-                                <td>${w.id}</td>
-                                <td class="num-cell text-blue">${Utils.formatCurrency(totalInc)}</td>
-                                <td class="num-cell text-red">${Utils.formatCurrency(totalExp)}</td>
-                                <td class="num-cell text-green">${Utils.formatCurrency(w.savings)}</td>
-                                <td class="num-cell"><strong>${Utils.formatCurrency(avail)}</strong></td>
-                            </tr>
-                        `;
-                    });
-
-                    monthCard.innerHTML = `
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:10px;">
-                            <h3 style="margin:0; text-transform:uppercase; color:var(--primary);">${month}</h3>
-                            <button class="btn btn-primary" style="padding:8px 16px; font-size:0.85rem" onclick="app.downloadMonthlyStatement('${month}')">
-                                📄 Descargar Estado de Cuenta
-                            </button>
-                        </div>
-                        <div class="table-container">
-                            <table class="table-sm">
-                                <thead><tr><th>Semana</th><th>Ingreso Total</th><th>Gastos</th><th>Ahorro</th><th>Disponible</th></tr></thead>
-                                <tbody>${rows}</tbody>
-                            </table>
-                        </div>
-                    `;
-                    container.appendChild(monthCard);
+                    let rows = weeks.map(w => {
+                        const totalInc = (parseFloat(w.income)||0) + (w.extraIncome||[]).reduce((a,b)=>a+b.amount,0);
+                        const totalExp = (w.transport||[]).reduce((a,b)=>a+parseFloat(b),0) + (w.food||[]).reduce((a,b)=>a+b.price,0) + (w.misc||[]).reduce((a,b)=>a+b.amount,0);
+                        return `<tr><td>${w.id}</td><td class="num-cell text-blue">${Utils.formatCurrency(totalInc)}</td><td class="num-cell text-red">${Utils.formatCurrency(totalExp)}</td><td class="num-cell text-green">${Utils.formatCurrency(w.savings)}</td><td class="num-cell"><strong>${Utils.formatCurrency(totalInc-totalExp-w.savings)}</strong></td></tr>`;
+                    }).join('');
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `<h3 style="margin-bottom:1rem">${month}</h3><div class="table-container"><table><thead><tr><th>Semana</th><th>Ingreso</th><th>Gastos</th><th>Ahorro</th><th>Disponible</th></tr></thead><tbody>${rows}</tbody></table></div><button class="btn btn-primary mt-4" onclick="app.downloadMonthlyStatement('${month}')">Descargar PDF</button>`;
+                    container.appendChild(div);
                 }
-            },
-
-            downloadPDF: (monthName) => {
-                // Wrapper antiguo, redirecciona al nuevo
-                app.downloadMonthlyStatement(monthName);
             },
 
             renderAnnualSummary: () => {
                 const container = document.getElementById('annual-container');
-                const allWeeks = Storage.getAllWeeksData();
                 const grouped = {};
-                allWeeks.forEach(week => {
-                    const monthName = Utils.getMonthName(week.id);
-                    if(!grouped[monthName]) grouped[monthName] = { inc:0, exp:0, sav:0 };
-                    
-                    const extras = (week.extraIncome || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
-                    const totalInc = (parseFloat(week.income)||0) + extras;
-                    
-                    const tTrans = (week.transport || []).reduce((a,b)=>a+(parseFloat(b)||0),0);
-                    const tFood = (week.food || []).reduce((a,b)=>a+(parseFloat(b.price)||0),0);
-                    const tMisc = (week.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
-                    
-                    grouped[monthName].inc += totalInc;
-                    grouped[monthName].exp += (tTrans + tFood + tMisc);
-                    grouped[monthName].sav += (parseFloat(week.savings)||0);
+                Storage.getAllWeeksData().forEach(week => {
+                    const m = Utils.getMonthName(week.id);
+                    if(!grouped[m]) grouped[m] = { inc:0, exp:0, sav:0 };
+                    grouped[m].inc += (parseFloat(week.income)||0) + (week.extraIncome||[]).reduce((a,b)=>a+b.amount,0);
+                    grouped[m].exp += (week.transport||[]).reduce((a,b)=>a+parseFloat(b),0) + (week.food||[]).reduce((a,b)=>a+week.food.reduce((x,y)=>x+y.price,0),0) + (week.misc||[]).reduce((a,b)=>a+week.misc.reduce((x,y)=>x+y.amount,0),0);
+                    grouped[m].sav += (parseFloat(week.savings)||0);
                 });
-                container.innerHTML = '';
-                if(Object.keys(grouped).length === 0) {
-                    container.innerHTML = '<p class="text-muted">Sin datos.</p>';
-                    return;
-                }
-                let rows = '';
-                for (const [month, data] of Object.entries(grouped)) {
-                    rows += `<tr><td><strong>${month}</strong></td><td class="num-cell text-blue">${Utils.formatCurrency(data.inc)}</td><td class="num-cell text-red">${Utils.formatCurrency(data.exp)}</td><td class="num-cell text-green">${Utils.formatCurrency(data.sav)}</td></tr>`;
-                }
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `<div class="table-container"><table><thead><tr><th>Mes</th><th>Total Ingresos</th><th>Total Gastos</th><th>Total Ahorrado</th></tr></thead><tbody>${rows}</tbody></table></div>`;
-                container.appendChild(card);
+                let rows = Object.entries(grouped).map(([m, d]) => `<tr><td><strong>${m}</strong></td><td class="num-cell text-blue">${Utils.formatCurrency(d.inc)}</td><td class="num-cell text-red">${Utils.formatCurrency(d.exp)}</td><td class="num-cell text-green">${Utils.formatCurrency(d.sav)}</td></tr>`).join('');
+                container.innerHTML = `<div class="card"><div class="table-container"><table><thead><tr><th>Mes</th><th>Ingresos</th><th>Gastos</th><th>Ahorro</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
             },
 
-            updateDashboardCalculations: () => {
-                const baseIncome = parseFloat(app.data.income) || 0;
-                // Sumar ingresos extra
-                const extraTotal = (app.data.extraIncome || []).reduce((a, b) => a + (parseFloat(b.amount)||0), 0);
-                const totalIncome = baseIncome + extraTotal;
-
-                const savings = parseFloat(app.data.savings) || 0;
-                const transportTotal = app.data.transport.reduce((a,b) => a + (parseFloat(b)||0), 0);
-                const foodTotal = app.data.food.reduce((a,b) => a + (parseFloat(b.price)||0), 0);
-                const miscTotal = (app.data.misc || []).reduce((a,b) => a + (parseFloat(b.amount)||0), 0);
-                const totalExpenses = transportTotal + foodTotal + miscTotal;
-                const available = totalIncome - totalExpenses - savings;
-                app.realAvailable = available;
-                
-                document.getElementById('disp-income').innerText = Utils.formatCurrency(totalIncome);
-                document.getElementById('disp-savings').innerText = Utils.formatCurrency(savings);
-                document.getElementById('disp-expenses').innerText = Utils.formatCurrency(totalExpenses);
-                document.getElementById('disp-expenses-detail').innerText = `T: ${Utils.formatCurrency(transportTotal)} | C: ${Utils.formatCurrency(foodTotal)} | V: ${Utils.formatCurrency(miscTotal)}`;
-                const elAvailable = document.getElementById('disp-available');
-                elAvailable.innerText = Utils.formatCurrency(available);
-                if(available < 0) elAvailable.style.color = 'var(--danger)';
-                else elAvailable.style.color = 'var(--success)';
-                
-                document.getElementById('inp-income').value = baseIncome || '';
-                document.getElementById('inp-savings').value = savings || '';
-                document.getElementById('global-savings').innerText = Utils.formatCurrency(Storage.getGlobalSavings());
-                
-                // Refresh distribution calculations
-                app.renderExtraIncome();
-                app.renderDistro();
-            },
-
-            renderAll: () => {
-                app.updateDashboardCalculations();
-                app.renderTransportInputs();
-                app.renderFoodList();
-                app.renderMiscList();
-                app.renderExtraIncome();
-                app.renderDistro();
-            },
-
-            // --- NUEVO MOTOR DE REPORTE MENSUAL (ESTILO BANCO) ---
             downloadMonthlyStatement: (monthName) => {
                 const { jsPDF } = window.jspdf;
                 const doc = new jsPDF();
-                
-                // 1. Recopilar datos del mes completo
-                const allWeeks = Storage.getAllWeeksData();
-                const monthWeeks = allWeeks.filter(w => Utils.getMonthName(w.id) === monthName);
+                doc.text(`Estado de Cuenta - ${monthName}`, 14, 20);
+                doc.save(`Estado_${monthName}.pdf`);
+            },
 
-                // Calcular Totales Mensuales Agrupados
-                let totalIncome = 0;
-                let totalSavings = 0;
-                let totalTransport = 0;
-                let totalFood = 0;
-                let totalMisc = 0;
-
-                monthWeeks.forEach(w => {
-                    const extras = (w.extraIncome || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
-                    totalIncome += (parseFloat(w.income) || 0) + extras;
-                    
-                    totalSavings += parseFloat(w.savings) || 0;
-                    totalTransport += (w.transport || []).reduce((a,b)=>a+(parseFloat(b)||0),0);
-                    totalFood += (w.food || []).reduce((a,b)=>a+(parseFloat(b.price)||0),0);
-                    totalMisc += (w.misc || []).reduce((a,b)=>a+(parseFloat(b.amount)||0),0);
-                });
-
-                const totalExpenses = totalTransport + totalFood + totalMisc;
-                const finalAvailable = totalIncome - totalSavings - totalExpenses;
-
-                // 2. Diseño del PDF (Estilo Corporativo)
-                const margin = 14;
-                
-                // Encabezado
-                doc.setFillColor(15, 23, 42); // Slate 900
-                doc.rect(0, 0, 210, 40, 'F');
-                
-                doc.setFontSize(22);
-                doc.setTextColor(255, 255, 255);
-                doc.text("ESTADO DE CUENTA", margin, 20);
-                
-                doc.setFontSize(10);
-                doc.setTextColor(148, 163, 184); // Slate 400
-                doc.text(`Periodo: ${monthName}`, margin, 30);
-                doc.text(`Generado: ${new Date().toLocaleDateString()}`, 200, 30, { align: 'right' });
-
-                let y = 50;
-
-                // 3. Tabla Resumen Ejecutivo (Lo más importante)
-                doc.setFontSize(12);
-                doc.setTextColor(15, 23, 42);
-                doc.text("RESUMEN FINANCIERO", margin, y);
-                y += 5;
-
-                const summaryData = [
-                    ["INGRESOS TOTALES", `+ ${Utils.formatCurrency(totalIncome)}`],
-                    ["AHORRO RETENIDO", `- ${Utils.formatCurrency(totalSavings)}`],
-                    ["GASTOS OPERATIVOS", `- ${Utils.formatCurrency(totalExpenses)}`],
-                    ["DINERO DISPONIBLE NETO", `= ${Utils.formatCurrency(finalAvailable)}`]
-                ];
-
-                doc.autoTable({
-                    startY: y,
-                    head: [['Concepto', 'Monto']],
-                    body: summaryData,
-                    theme: 'striped',
-                    headStyles: { fillColor: [59, 130, 246], fontStyle: 'bold' },
-                    columnStyles: { 
-                        0: { cellWidth: 120 },
-                        1: { halign: 'right', fontStyle: 'bold' } 
-                    },
-                    styles: { fontSize: 11, cellPadding: 6 }
-                });
-
-                y = doc.lastAutoTable.finalY + 15;
-
-                // 4. Desglose de Gastos (Gráfico textual)
-                doc.text("DESGLOSE DE GASTOS", margin, y);
-                y += 5;
-
-                const expenseData = [
-                    ["Transporte", Utils.formatCurrency(totalTransport), `${((totalTransport/totalExpenses)*100 || 0).toFixed(1)}%`],
-                    ["Comida de Trabajo", Utils.formatCurrency(totalFood), `${((totalFood/totalExpenses)*100 || 0).toFixed(1)}%`],
-                    ["Gastos Variados", Utils.formatCurrency(totalMisc), `${((totalMisc/totalExpenses)*100 || 0).toFixed(1)}%`]
-                ];
-
-                doc.autoTable({
-                    startY: y,
-                    head: [['Categoría', 'Monto', '% del Gasto']],
-                    body: expenseData,
-                    theme: 'grid',
-                    headStyles: { fillColor: [239, 68, 68], textColor: 255 }, // Rojo para gastos
-                    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } }
-                });
-
-                y = doc.lastAutoTable.finalY + 15;
-
-                // 5. Historial de Semanas (Detalle)
-                doc.text("DETALLE SEMANAL", margin, y);
-                y += 5;
-
-                const weeksData = monthWeeks.map(w => {
-                    const extras = (w.extraIncome || []).reduce((a,b)=>a+(parseFloat(b.amount)||0), 0);
-                    const weekInc = (parseFloat(w.income)||0) + extras;
-                    const exp = (w.transport||[]).reduce((a,b)=>a+parseFloat(b),0) + 
-                                (w.food||[]).reduce((a,b)=>a+parseFloat(b.price),0) + 
-                                (w.misc||[]).reduce((a,b)=>a+parseFloat(b.amount),0);
-                    return [
-                        w.id,
-                        Utils.formatCurrency(weekInc),
-                        Utils.formatCurrency(w.savings),
-                        Utils.formatCurrency(exp),
-                        Utils.formatCurrency(weekInc - w.savings - exp)
-                    ];
-                });
-
-                doc.autoTable({
-                    startY: y,
-                    head: [['ID Semana', 'Ingreso Total', 'Ahorro', 'Gastos', 'Disponible']],
-                    body: weeksData,
-                    theme: 'plain',
-                    headStyles: { fillColor: [241, 245, 249], textColor: 0 },
-                    columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' }, 3: { halign: 'right' }, 4: { halign: 'right', fontStyle: 'bold', textColor: [16, 185, 129] } }
-                });
-
-                // Pie de página
-                const pageCount = doc.internal.getNumberOfPages();
-                for(let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(150);
-                    doc.text(`Página ${i} de ${pageCount}`, 105, 290, { align: 'center' });
-                }
-
-                doc.save(`Estado_Cuenta_${monthName}_Corporativo.pdf`);
-            }
+            renderAll: () => app.updateDashboardCalculations()
         };
 
         function router(viewId) {
             document.querySelectorAll('.section-view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${viewId}`).classList.add('active');
-            const btns = document.querySelectorAll('.nav-btn');
             const map = { dashboard:0, transport:1, food:2, misc:3, savings:4, distro:5, monthly:6, annual:7 };
-            if(btns[map[viewId]]) btns[map[viewId]].classList.add('active');
+            document.querySelectorAll('.nav-btn')[map[viewId]]?.classList.add('active');
             if(viewId === 'monthly') app.renderMonthlyHistory();
             if(viewId === 'annual') app.renderAnnualSummary();
-            if(viewId === 'distro') app.renderDistro();
             if(viewId === 'dashboard') app.updateDashboardCalculations();
             document.getElementById('main-scroll').scrollTop = 0;
             closeSidebarMobile();
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function closeSidebarMobile() { if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open'); }
 
-        function closeSidebarMobile() {
-            if(window.innerWidth <= 768) {
-                document.getElementById('sidebar').classList.remove('open');
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            app.init();
-        });
+        window.addEventListener('DOMContentLoaded', app.init);
     </script>
 </body>
 </html>
